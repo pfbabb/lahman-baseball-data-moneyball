@@ -6,6 +6,14 @@ AND yearid >= 1970 AND yearid <> 1981
 ORDER BY W DESC
 */
 
+/*
+SELECT teamID, name, yearID, W, WSWin, G
+FROM teams
+WHERE WSWin = 'N'
+AND yearid >= 1970 AND yearid <> 1981
+ORDER BY W DESC
+*/
+
 WITH winworld AS (
 	SELECT yearID, name, (CASE WHEN W = MAX(W) OVER(PARTITION BY yearID) AND WSwin = 'Y' THEN 1 ELSE 0 END) AS max_wins, WSwin
 	FROM teams

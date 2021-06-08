@@ -5,7 +5,9 @@ WITH stolenbases AS (
 	GROUP BY playerid
 	ORDER BY playerid
 	)
-SELECT playerid, ROUND((stolen::decimal/attempt::decimal)*100,2) AS success
+SELECT namefirst, namelast, ROUND((stolen::decimal/attempt::decimal)*100,2) AS success
 FROM stolenbases
+LEFT JOIN people
+ON stolenbases.playerid = people.playerid
 WHERE attempt > 20
 ORDER BY success DESC

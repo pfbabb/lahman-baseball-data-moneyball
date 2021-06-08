@@ -18,7 +18,7 @@ INNER JOIN sum_stat
 USING (decade)
 WHERE decade >= 1920
 */
-SELECT (yearid/10)*10 as decade, SUM(so)::DECIMAL / SUM(ghome)::DECIMAL AS so_per_game
+SELECT (yearid/10)*10 as decade, ROUND(SUM(so)::DECIMAL / SUM(ghome)::DECIMAL,2) AS so_per_game
 FROM teams
 WHERE yearid >=1920
 GROUP BY decade

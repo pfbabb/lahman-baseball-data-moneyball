@@ -1,4 +1,4 @@
-SELECT park_name, teams.name, (homegames.attendance / games) AS avg_att
+SELECT park_name, teams.name, (homegames.attendance / games) AS avg_att, RANK() OVER(ORDER BY (homegames.attendance / games) DESC) AS ranking
 FROM homegames
 LEFT JOIN parks
 USING (park)
