@@ -1,4 +1,4 @@
-SELECT namefirst, namelast, SUM(salary)::int::money AS earnings
+SELECT namefirst, namelast, SUM(COALESCE(salary,0))::int::money AS earnings
 FROM people
 LEFT JOIN salaries
 USING (playerid)
