@@ -6,10 +6,7 @@ WITH countawards AS (
 	ORDER BY numawards DESC
 	)
 	,
-wsplayer AS (
-	SELECT playerid, COUNT(*) AS wsapp
-	FROM teams
-	LEFT JOIN (
+WSplayers AS (
 			SELECT playerid, yearid, teamid
 			FROM battingpost
 			WHERE round = 'WS'
@@ -21,11 +18,26 @@ wsplayer AS (
 			SELECT playerid, yearid, teamid
 			FROM pitchingpost
 			WHERE round = 'WS'
-			)  AS WSplayers
-			USING (yearid, teamid)
-	--WHERE WSwin = 'Y'
-	GROUP BY playerid
-	ORDER BY playerid
+			)
+			,
+wsplayer AS (
+	SELECT playerid, COUNT(*) AS wsapp
+	FROM (
+		SELECT *
+		FROM WSplayers
+		UNION
+		SELECT playerid, yearid, teamid
+	FROM (
+		SELECT yearid, teamid
+		FROM managers
+		INTERSECT
+		SELECT yearid, teamid
+		FROM WSplayers
+			) as sub
+	LEFT JOIN managers
+	USING (yearid, teamid)
+		) AS sub
+		GROUP BY playerid
 	),	
 avgsalary AS (
 	SELECT salaries.playerid, (SUM(salary) / COUNT(DISTINCT salaries.yearid)) AS avg_salary
@@ -46,7 +58,8 @@ tnplayers AS (
 	WHERE collegeplaying.schoolid IN (SELECT schoolid FROM schools WHERE schoolstate = 'TN')
 	)
 	
-SELECT schoolid, count(playerid),
+
+SELECT schoolname, count(playerid),
 	(sum(avg_salary)::DECIMAL / COUNT(playerid))::MONEY, 
 	sum(numawards) AS sumawards, sum(wsapp) AS WSapp
 FROM tnplayers
@@ -56,7 +69,9 @@ LEFT JOIN countawards
 USING (playerid)
 LEFT JOIN wsplayer
 USING (playerid)
-GROUP BY schoolid
+LEFT JOIN schools
+USING (schoolid)
+GROUP BY schoolname
 ORDER BY sum(avg_salary) DESC;
 
 

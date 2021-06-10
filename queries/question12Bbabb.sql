@@ -19,7 +19,7 @@ AND w1.attendance < w2.attendance
 GROUP BY ROLLUP (w1.wswin, w1.divwin, w1.wcwin)
 */
 
-SELECT COUNT(DISTINCT years), SUM(wscount), SUM(ploffcount)
+SELECT ROUND(SUM(wscount)::DECIMAL / COUNT(DISTINCT years)*100,2) AS WSbyyear,  ROUND(SUM(ploffcount)::DECIMAL/ COUNT(*)*100,2) AS playoffbyteams
 FROM (
 
 
